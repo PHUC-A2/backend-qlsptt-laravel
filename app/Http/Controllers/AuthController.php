@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\ApiResponse;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -10,6 +11,10 @@ use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
+
+    // dùng trait
+    use ApiResponse;
+
     public function register(Request $request)
     {
         //  validate
@@ -21,28 +26,17 @@ class AuthController extends Controller
 
         if ($validator->fails()) {
             $errorMessage = $validator->errors()->first();
-            $response = [
-                "status" => false,
-                "meassage" => $errorMessage,
-            ];
-
-            return response()->json($response, 401);
+            return $this->error($errorMessage, 401);
         }
 
-
         // Create User
-
-        User::create([
+        $user = User::create([
             "name" => $request->name,
             "email" => $request->email,
             "password" => bcrypt($request->password)
         ]);
 
-        // Response
-        return response()->json([
-            "status" => true,
-            "message" => "User registered successfully"
-        ]);
+        return $this->success("Đăng ký tài khoản thành công", $user, 201);
     }
 
     public function login(Request $request)
@@ -55,12 +49,7 @@ class AuthController extends Controller
 
         if ($validator->fails()) {
             $errorMessage = $validator->errors()->first();
-            $response = [
-                "status" => false,
-                "meassage" => $errorMessage,
-            ];
-
-            return response()->json($response, 401);
+            return $this->notAuthorized($errorMessage);
         }
 
         // Check user by email
@@ -75,41 +64,26 @@ class AuthController extends Controller
                 // Login is ok
                 $tokenInfo = $user->createToken("api-token");
                 $token = $tokenInfo->plainTextToken; // Token value
-
-                return response()->json([
-                    "status" => true,
-                    "message" => "Login successfully",
-                    "token" => $token
-                ]);
+                return $this->success("Đăng nhập thành công", $token, 200);
             } else {
 
                 //  nếu mật khẩu không khớp
-                return response()->json([
-                    "status" => false,
-                    "message" => "Password didn't match"
-                ]);
+                return $this->error("Sai mật khẩu", 401);
             }
         } else {
+
             // Thông tin đăng nhập không hợp lệ
-            return response()->json([
-                "status" => false,
-                "message" => "Invalid credentials"
-            ]);
+            return $this->error("Thông tin đăng nhập không hợp lệ", 401);
         }
     }
 
     public function profile(Request $request)
     {
         $userData = $request->user();
-
-        return response()->json([
-            "status" => true,
-            "message" => "Profile infomation",
-            "data" => $userData
-        ]);
+        return $this->ok("Tài khoản cá nhân là", $userData, 200);
     }
 
-    // GET
+    // POST
     public function logout()
     {
         // to get all tokens off logged in user and delete that
@@ -117,10 +91,7 @@ class AuthController extends Controller
 
         request()->user()->tokens()->delete();
 
-        return response()->json([
-            "status" => true,
-            "message" => "User logged out",
-        ]);
+        return $this->ok("Đăng xuất thành công", 200);
     }
 
     // GET
@@ -131,10 +102,6 @@ class AuthController extends Controller
         $tokenInfo = request()->user()->createToken("api-token");
         $newToken = $tokenInfo->plainTextToken; // Token value
 
-        return response()->json([
-            "status" => true,
-            "message" => "Refresh token",
-            "token" => $newToken
-        ]);
+        return $this->ok("Refresh token", $newToken);
     }
 }

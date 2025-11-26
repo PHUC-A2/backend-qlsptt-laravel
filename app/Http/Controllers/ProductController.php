@@ -2,26 +2,24 @@
 
 namespace App\Http\Controllers;
 
+use App\ApiResponse;
 use App\Http\Controllers\Controller;
 use App\Models\Product;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
+    // sử dụng traits
+    use ApiResponse;
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $users = Product::all();
-        return response()->json([
-            "data" => $users
-        ], 200);
+        $products = Product::all();
+        return $this->ok("Lấy tất cả sản phẩm", $products);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         $request->validate([
@@ -31,41 +29,24 @@ class ProductController extends Controller
             'type' => 'nullable|string',
             'price' => 'required|numeric',
             'quantity' => 'required|integer|min:0',
-
         ]);
 
-        $product = Product::create([
-            'name' => $request->name,
-            'image_url' =>  $request->image_url,
-            'description' =>  $request->description,
-            'type' =>  $request->type,
-            'price' =>  $request->price,
-            'quantity' =>  $request->quantity,
-        ]);
+        $product = Product::create($request->all());
 
-        return response()->json([
-            "message" => "Tạo sản phẩm thành công",
-            "data" => $product
-        ]);
+        return $this->success("Tạo sản phẩm thành công", $product,201);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function show($id)
     {
         $product = Product::find($id);
-        if (!$product) return response()->json(["message" => "Sản phẩm không tồn tại"], 404);
-        return response()->json(["data" => $product], 200);
+        if (!$product) return $this->error("Sản phẩm không tồn tại", 404);
+        return $this->ok("Lấy sản phẩm thành công", $product);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function update(Request $request, $id)
     {
         $product = Product::find($id);
-        if (!$product) return response()->json(["message" => "Sản phẩm không tồn tại"], 404);
+        if (!$product) return $this->error("Sản phẩm không tồn tại", 404);
 
         $request->validate([
             'name' => 'required|string|max:255',
@@ -74,32 +55,18 @@ class ProductController extends Controller
             'type' => 'nullable|string',
             'price' => 'required|numeric',
             'quantity' => 'required|integer|min:0',
-
         ]);
 
-        $product->update([
-            'name' => $request->name,
-            'image_url' =>  $request->image_url,
-            'description' =>  $request->description,
-            'type' =>  $request->type,
-            'price' =>  $request->price,
-            'quantity' =>  $request->quantity,
-        ]);
+        $product->update($request->all());
 
-        return response()->json([
-            "message" => "Cập nhật sản phẩm thành công",
-            "data" => $product
-        ]);
+        return $this->ok("Cập nhật sản phẩm thành công", $product);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+    public function destroy($id)
     {
-        $peoduct = Product::find($id);
-        if (!$peoduct) return response()->json(["message" => "Sản phẩm không tồn tại"], 404);
-        $peoduct->delete();
-        return response()->json(["message" => "Sản phẩm đã bị xóa"], 200);
+        $product = Product::find($id);
+        if (!$product) return $this->error("Sản phẩm không tồn tại", 404);
+        $product->delete();
+        return $this->ok("Sản phẩm đã bị xóa");
     }
 }

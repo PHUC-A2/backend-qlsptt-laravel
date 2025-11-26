@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\ApiResponse;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -9,15 +10,15 @@ use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
+    // sử dụng traits
+    use ApiResponse;
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
         $users = User::all();
-        return response()->json([
-            "data" => $users
-        ], 200);
+        return $this->ok("Lấy tất cả người dùng", $users);
     }
 
     /**
@@ -37,10 +38,7 @@ class UserController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        return response()->json([
-            "message" => "Tạo người dùng thành công",
-            "data" => $user
-        ]);
+        return $this->success("Tạo người dùng thành công", $user, 201);
     }
 
     /**
@@ -49,8 +47,8 @@ class UserController extends Controller
     public function show(string $id)
     {
         $user = User::find($id);
-        if (!$user) return response()->json(["message" => "Người dùng không tồn tại"], 404);
-        return response()->json(["data" => $user], 200);
+        if (!$user) return $this->error("Người dùng không tồn tại", 404);
+        return $this->ok("Lấy người dùng thành công", $user);
     }
 
     /**
@@ -59,7 +57,7 @@ class UserController extends Controller
     public function update(Request $request, string $id)
     {
         $user = User::find($id);
-        if (!$user) return response()->json(["message" => "Người dùng không tồn tại"], 404);
+        if (!$user) return $this->error("Người dùng không tồn tại", 404);
 
         $request->validate([
             'name' => 'nullable|string|max:255',
@@ -73,10 +71,7 @@ class UserController extends Controller
             'password' => $request->password ? Hash::make($request->password) : $user->password,
         ]);
 
-        return response()->json([
-            "message" => "Cập nhật người dùng thành công",
-            "data" => $user
-        ]);
+        return $this->ok("Cập nhật người dùng thành công", $user);
     }
 
     /**
@@ -85,8 +80,8 @@ class UserController extends Controller
     public function destroy(string $id)
     {
         $user = User::find($id);
-        if (!$user) return response()->json(["message" => "Người dùng không tồn tại"], 404);
+        if (!$user) return $this->error("Người dùng không tồn tại", 404);
         $user->delete();
-        return response()->json(["message" => "Người dùng đã bị xóa"], 200);
+        return $this->ok("Người dùng đã bị xóa");
     }
 }
