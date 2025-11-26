@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\FileController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -8,6 +9,9 @@ use Illuminate\Support\Facades\Route;
 /*
    Những api nằm ngoài nhóm "Protected Routes" sẽ không cần token
 */
+
+// upload
+Route::post('/files/upload', [FileController::class, 'upload']);
 
 // api auth
 Route::post('register', [AuthController::class, 'register']);
