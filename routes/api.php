@@ -14,8 +14,8 @@ use Illuminate\Support\Facades\Route;
 Route::post('/files/upload', [FileController::class, 'upload']);
 
 // api auth
-Route::post('register', [AuthController::class, 'register']);
-Route::post('login', [AuthController::class, 'login']);
+Route::post('auth/register', [AuthController::class, 'register']);
+Route::post('auth/login', [AuthController::class, 'login']);
 
 // Protected Routes
 Route::group(
@@ -39,9 +39,9 @@ Route::group(
         Route::delete('/products/{id}', [ProductController::class, 'destroy']);
 
         // api auth
-        Route::get('profile', [AuthController::class, 'profile']);
-        Route::post('logout', [AuthController::class, 'logout']);
-        Route::get('refresh', [AuthController::class, 'refreshToken']);
+        Route::get('auth/profile', [AuthController::class, 'profile']);
+        Route::post('auth/logout', [AuthController::class, 'logout']);
+        Route::get('auth/refresh', [AuthController::class, 'refreshToken']);
     }
 );
 
