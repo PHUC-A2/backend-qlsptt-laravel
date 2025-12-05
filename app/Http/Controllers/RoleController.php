@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\ApiResponse;
+use App\Http\Requests\AssignPermissionRequest;
 use App\Models\Role;
 use Illuminate\Http\Request;
 
@@ -85,5 +86,22 @@ class RoleController extends Controller
         $role->delete();
 
         return $this->ok("Xóa role thành công");
+    }
+
+    /**
+     * gắn permission cho roles
+     */
+
+    public function assignPermissions(AssignPermissionRequest $request, $roleId)
+    {
+        $role = Role::findOrFail($roleId);
+
+        $role->permissions()->sync($request->permission_ids);
+
+        return response()->json([
+            'status' => 200,
+            'message' => 'Permissions được gắn thành công cho roles',
+            'role' => $role->load('permissions')
+        ]);
     }
 }

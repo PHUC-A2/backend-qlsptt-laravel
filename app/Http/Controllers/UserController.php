@@ -84,4 +84,24 @@ class UserController extends Controller
         $user->delete();
         return $this->ok("Người dùng đã bị xóa");
     }
+
+    /*
+        gắn vai trò cho user
+    */
+
+    public function assignRoles(Request $request, $id)
+    {
+        $request->validate([
+            'role_ids' => 'required|array'
+        ]);
+
+        $user = User::findOrFail($id);
+        $user->roles()->sync($request->role_ids); // gắn role
+
+        return response()->json([
+            'status' => 200,
+            'message' => 'Gán role cho users thành công',
+            'data' => $user->roles
+        ]);
+    }
 }

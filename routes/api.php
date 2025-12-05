@@ -35,6 +35,12 @@ Route::group(
         Route::put('/users/{id}', [UserController::class, 'update']);
         Route::delete('/users/{id}', [UserController::class, 'destroy']);
 
+        // api gắn roles cho users
+        Route::post('/users/{id}/assign-roles', [UserController::class, 'assignRoles']);
+
+        // api gắn permissions cho roles
+        Route::post('/roles/{id}/assign-permissions', [RoleController::class, 'assignPermissions']);
+
         // api produts
         Route::get('/products', [ProductController::class, 'index']);
         Route::post('/products', [ProductController::class, 'store']);
