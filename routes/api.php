@@ -2,7 +2,9 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\FileController;
+use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -40,6 +42,20 @@ Route::group(
         Route::put('/products/{id}', [ProductController::class, 'update']);
         Route::delete('/products/{id}', [ProductController::class, 'destroy']);
 
+        // api roles
+        Route::get('/roles', [RoleController::class, 'index']);
+        Route::post('/roles', [RoleController::class, 'store']);
+        Route::get('/roles/{id}', [RoleController::class, 'show']);
+        Route::put('/roles/{id}', [RoleController::class, 'update']);
+        Route::delete('/roles/{id}', [RoleController::class, 'destroy']);
+
+        // api permissions
+        Route::get('/permissions', [PermissionController::class, 'index']);
+        Route::post('/permissions', [PermissionController::class, 'store']);
+        Route::get('/permissions/{id}', [PermissionController::class, 'show']);
+        Route::put('/permissions/{id}', [PermissionController::class, 'update']);
+        Route::delete('/permissions/{id}', [PermissionController::class, 'destroy']);
+
         // api auth
         Route::get('auth/profile', [AuthController::class, 'profile']);
         Route::post('auth/logout', [AuthController::class, 'logout']);
@@ -54,4 +70,3 @@ Route::get("/", function () {
     ], 200);
 });
 // Laravel Passport
-
