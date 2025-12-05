@@ -41,7 +41,7 @@ class AuthController extends Controller
         // Response
         return response()->json([
             "status" => true,
-            "message" => "User registered successfully"
+            "message" => "Đăng ký tài khoản thành công"
         ]);
     }
 
@@ -78,7 +78,7 @@ class AuthController extends Controller
 
                 return response()->json([
                     "status" => true,
-                    "message" => "Login successfully",
+                    "message" => "Đăng nhập thành công",
                     "access_token" => $token
                 ]);
             } else {
@@ -86,14 +86,14 @@ class AuthController extends Controller
                 //  nếu mật khẩu không khớp
                 return response()->json([
                     "status" => false,
-                    "message" => "Password didn't match"
+                    "message" => "Sai mật khẩu đăng nhập"
                 ]);
             }
         } else {
             // Thông tin đăng nhập không hợp lệ
             return response()->json([
                 "status" => false,
-                "message" => "Invalid credentials"
+                "message" => "Thông tin đăng nhập không hợp lệ"
             ]);
         }
     }
@@ -119,7 +119,7 @@ class AuthController extends Controller
 
         return response()->json([
             "status" => true,
-            "message" => "User logged out",
+            "message" => "Đăng xuất thành công",
         ]);
     }
 

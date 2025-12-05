@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Route;
    Những api nằm ngoài nhóm "Protected Routes" sẽ không cần token
 */
 
+// Route::get('/products', [ProductController::class, 'index']);
+
 // upload
 Route::post('/files/upload', [FileController::class, 'upload']);
 
@@ -51,3 +53,5 @@ Route::get("/", function () {
         "data" => "Hello"
     ], 200);
 });
+// Laravel Passport
+

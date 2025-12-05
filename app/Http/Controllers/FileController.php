@@ -2,12 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\ApiResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Http\JsonResponse;
 
 class FileController extends Controller
 {
+
+    use ApiResponse;
+
     // POST /api/v1/files/upload
     public function upload(Request $request): JsonResponse
     {
@@ -29,10 +33,18 @@ class FileController extends Controller
         $url = asset("storage/{$path}");
 
         // trả JSON như Spring
-        return response()->json([
+        // return response()->json([
+        //     'fileName' => $filename,
+        //     'uploadedAt' => now(),
+        //     'url' => $url
+        // ]);
+
+        $data = [
             'fileName' => $filename,
             'uploadedAt' => now(),
             'url' => $url
-        ]);
+        ];
+
+        return $this->ok('Upload file thành công', $data);
     }
 }
