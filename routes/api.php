@@ -42,11 +42,16 @@ Route::group(
         Route::post('/roles/{id}/assign-permissions', [RoleController::class, 'assignPermissions']);
 
         // api produts
-        Route::get('/products', [ProductController::class, 'index']);
-        Route::post('/products', [ProductController::class, 'store']);
-        Route::get('/products/{id}', [ProductController::class, 'show']);
-        Route::put('/products/{id}', [ProductController::class, 'update']);
-        Route::delete('/products/{id}', [ProductController::class, 'destroy']);
+        Route::get('/products', [ProductController::class, 'index'])
+            ->middleware('permission:GET_PRODUCT');
+        Route::post('/products', [ProductController::class, 'store'])
+            ->middleware('permission:CREATE_PRODUCT');;
+        Route::get('/products/{id}', [ProductController::class, 'show'])
+            ->middleware('permission:GET_PRODUCT_DETAIL');;
+        Route::put('/products/{id}', [ProductController::class, 'update'])
+            ->middleware('permission:UPDATE_PRODUCT');;
+        Route::delete('/products/{id}', [ProductController::class, 'destroy'])
+            ->middleware('permission:DELETE_PRODUCT');;
 
         // api roles
         Route::get('/roles', [RoleController::class, 'index']);

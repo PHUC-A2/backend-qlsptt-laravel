@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\ApiResponse;
 use App\Http\Controllers\Controller;
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -69,6 +70,13 @@ class UserController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
+
+        // gắn role VIEW tự động cho user mỗi khi đăng ký tài khoản
+        $viewRoleId = Role::where('name', 'VIEW')->value('id');
+
+        if ($viewRoleId) {
+            $user->roles()->sync([$viewRoleId]);
+        }
 
         return $this->success("Tạo người dùng thành công", $user, 201);
     }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -32,11 +33,18 @@ class AuthController extends Controller
 
         // Create User
 
-        User::create([
+        $user = User::create([
             "name" => $request->name,
             "email" => $request->email,
             "password" => bcrypt($request->password)
         ]);
+
+        // gắn role VIEW tự động cho user mỗi khi đăng ký tài khoản
+        $viewRoleId = Role::where('name', 'VIEW')->value('id');
+
+        if ($viewRoleId) {
+            $user->roles()->sync([$viewRoleId]);
+        }
 
         // Response
         return response()->json([
