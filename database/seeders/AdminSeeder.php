@@ -14,10 +14,8 @@ class AdminSeeder extends Seeder
      */
     public function run(): void
     {
-        // 1. Tạo role ADMIN nếu chưa có
-        $adminRole = Role::firstOrCreate(
-            ['name' => 'ADMIN'],
-        );
+        // 1. Lấy role ADMIN
+        $adminRole = Role::where('name','ADMIN')->first();
 
         // 2. Tạo user admin nếu chưa tồn tại
         $admin = User::firstOrCreate(
@@ -33,6 +31,6 @@ class AdminSeeder extends Seeder
             $admin->roles()->attach($adminRole->id);
         }
 
-        echo "Seeder: ADMIN user and role created/updated successfully.\n";
+        echo "Seeder: Tạo mới tài khoản admin thành công.\n";
     }
 }
