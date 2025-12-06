@@ -23,11 +23,16 @@ class CheckPermission
             ], 401);
         }
 
+        // Nếu user có role ADMIN -> bỏ qua hết kiểm tra permission
+        if ($user->roles()->where('name', 'ADMIN')->exists()) {
+            return $next($request);
+        }
+
         // Cho phép truyền nhiều permission, ngăn cách bằng |
         $requiredPermissions = explode('|', $permission);
 
         // Lấy tất cả permission user có (từ các role)
-        $userPermissions = $user->getAllPermissions()->toArray();
+        $userPermissions = $user->getAllPermissions()->pluck('name')->toArray();
 
         // Nếu có ít nhất 1 permission phù hợp -> được phép
         $allowed = collect($requiredPermissions)
