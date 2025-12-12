@@ -16,7 +16,7 @@ class PermissionSeeder extends Seeder
         $permissions = [
             ['name' => 'GET_PRODUCT', 'description' => 'Xem tất cả sản phẩm'],
             ['name' => 'GET_PRODUCT_DETAIL', 'description' => 'Xem chi tiết sản phẩm'],
-            ['name' => 'CREATE_PRODUCT', 'description' => 'Tạo sản phẩm mới'],
+            ['name' => 'POST_PRODUCT', 'description' => 'Tạo sản phẩm mới'],
             ['name' => 'PUT_PRODUCT', 'description' => 'Cập nhật sản phẩm'],
             ['name' => 'DELETE_PRODUCT', 'description' => 'Xóa sản phẩm'],
             // thêm các permission khác ở đây

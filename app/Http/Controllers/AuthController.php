@@ -106,16 +106,43 @@ class AuthController extends Controller
         }
     }
 
+    // public function profile(Request $request)
+    // {
+    //     $userData = $request->user();
+
+    //     return response()->json([
+    //         "status" => true,
+    //         "message" => "Profile infomation",
+    //         "data" => $userData
+    //     ]);
+    // }
     public function profile(Request $request)
     {
-        $userData = $request->user();
+        $user = $request->user()->load('roles.permissions'); // lấy kèm roles + permissions
+
+        $formatted = [
+            'id' => $user->id,
+            'name' => $user->name,
+            'email' => $user->email,
+            'roles' => $user->roles->pluck('name')->values(),
+            'permissions' => $user->getAllPermissions(),
+            'roles_detail' => $user->roles->map(function ($role) {
+                return [
+                    'id' => $role->id,
+                    'name' => $role->name,
+                    'permissions' => $role->permissions->pluck('name')->values(),
+                ];
+            }),
+
+        ];
 
         return response()->json([
-            "status" => true,
-            "message" => "Profile infomation",
-            "data" => $userData
+            'status' => true,
+            'message' => 'Profile information',
+            'data' => $formatted
         ]);
     }
+
 
     // GET
     public function logout()
