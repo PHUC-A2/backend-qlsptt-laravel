@@ -116,24 +116,63 @@ class AuthController extends Controller
     //         "data" => $userData
     //     ]);
     // }
+    // public function profile(Request $request)
+    // {
+    //     $user = $request->user()->load('roles.permissions'); // lấy kèm roles + permissions
+
+    //     $formatted = [
+    //         'id' => $user->id,
+    //         'name' => $user->name,
+    //         'email' => $user->email,
+    //         'roles' => $user->roles->pluck('name')->values(),
+    //         'permissions' => $user->getAllPermissions(),
+    //         'roles_detail' => $user->roles->map(function ($role) {
+    //             return [
+    //                 'id' => $role->id,
+    //                 'name' => $role->name,
+    //                 'permissions' => $role->permissions->pluck('name')->values(),
+    //             ];
+    //         }),
+
+    //     ];
+
+    //     return response()->json([
+    //         'status' => true,
+    //         'message' => 'Profile information',
+    //         'data' => $formatted
+    //     ]);
+    // }
     public function profile(Request $request)
     {
-        $user = $request->user()->load('roles.permissions'); // lấy kèm roles + permissions
+        $user = $request->user()->load('roles.permissions');
+
+        // Tên các role full quyền
+        $FULL_ACCESS_ROLES = ['ADMIN', 'SUPER_ADMIN'];
 
         $formatted = [
             'id' => $user->id,
             'name' => $user->name,
             'email' => $user->email,
+
+            // roles dạng ["ADMIN", "STAFF"]
             'roles' => $user->roles->pluck('name')->values(),
+
+            // permissions trực tiếp từ user
             'permissions' => $user->getAllPermissions(),
+
+            // roles + permissions trong role
             'roles_detail' => $user->roles->map(function ($role) {
                 return [
                     'id' => $role->id,
                     'name' => $role->name,
                     'permissions' => $role->permissions->pluck('name')->values(),
                 ];
-            }),
+            })->values(),
 
+            //Thêm field is_full_access
+            'is_full_access' => $user->roles->pluck('name')
+                ->intersect($FULL_ACCESS_ROLES)
+                ->isNotEmpty(),
         ];
 
         return response()->json([
@@ -142,6 +181,7 @@ class AuthController extends Controller
             'data' => $formatted
         ]);
     }
+
 
 
     // GET

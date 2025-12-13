@@ -100,6 +100,10 @@ class UserController extends Controller
             return $this->error("Người dùng không tồn tại", 404);
         }
 
+
+        // Tên các role full quyền
+        $FULL_ACCESS_ROLES = ['ADMIN', 'SUPER_ADMIN'];
+
         // Format dữ liệu trả ra
         $formatted = [
             "id" => $user->id,
@@ -120,6 +124,10 @@ class UserController extends Controller
                     "permissions" => $role->permissions->pluck('name')->values(),
                 ];
             }),
+            //Thêm field is_full_access
+            'is_full_access' => $user->roles->pluck('name')
+                ->intersect($FULL_ACCESS_ROLES)
+                ->isNotEmpty(),
         ];
 
         return $this->ok("Lấy người dùng thành công", $formatted);

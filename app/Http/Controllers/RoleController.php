@@ -14,11 +14,45 @@ class RoleController extends Controller
     /**
      * Lấy danh sách tất cả Roles
      */
+    // public function index()
+    // {
+    //     $roles = Role::all();
+    //     return $this->ok("Lấy tất cả roles", $roles);
+    // }
     public function index()
     {
-        $roles = Role::all();
-        return $this->ok("Lấy tất cả roles", $roles);
+        // Lấy tất cả role + permissions + pivot
+        $roles = Role::with('permissions')->get();
+
+        // Format dữ liệu
+        $formatted = $roles->map(function ($role) {
+            return [
+                'id' => $role->id,
+                'name' => $role->name,
+
+                // danh sách tên permissions
+                'permissions' => $role->permissions->pluck('name')->values(),
+
+                // trả full detail như API show
+                'permissions_detail' => $role->permissions->map(function ($p) {
+                    return [
+                        'id' => $p->id,
+                        'name' => $p->name,
+                        'description' => $p->description,
+                        'created_at' => $p->created_at,
+                        'updated_at' => $p->updated_at,
+                        'pivot' => $p->pivot // role_id + permission_id
+                    ];
+                }),
+
+                'created_at' => $role->created_at,
+                'updated_at' => $role->updated_at,
+            ];
+        });
+
+        return $this->ok("Lấy tất cả roles", $formatted);
     }
+
 
     /**
      * Tạo mới một Role
@@ -39,16 +73,39 @@ class RoleController extends Controller
     /**
      * Hiển thị chi tiết Role
      */
+    // public function show($id)
+    // {
+    //     $role = Role::find($id);
+
+    //     if (!$role) {
+    //         return $this->error("Role không tồn tại", 404);
+    //     }
+
+    //     return $this->ok("Lấy role thành công", $role);
+    // }
     public function show($id)
     {
-        $role = Role::find($id);
+        // Lấy role + permission theo bảng role_permissions
+        $role = Role::with('permissions')->find($id);
 
         if (!$role) {
             return $this->error("Role không tồn tại", 404);
         }
 
-        return $this->ok("Lấy role thành công", $role);
+        // Format dữ liệu trả về
+        $formatted = [
+            'id' => $role->id,
+            'name' => $role->name,
+            'permissions' => $role->permissions->pluck('name')->values(), // chỉ trả về tên
+            'permissions_detail' => $role->permissions, // trả full object
+            'created_at' => $role->created_at,
+            'updated_at' => $role->updated_at,
+        ];
+
+        return $this->ok("Lấy role thành công", $formatted);
     }
+
+
 
     /**
      * Cập nhật Role
