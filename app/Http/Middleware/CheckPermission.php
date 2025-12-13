@@ -32,7 +32,7 @@ class CheckPermission
         $requiredPermissions = explode('|', $permission);
 
         // Lấy tất cả permission user có (từ các role)
-        $userPermissions = $user->getAllPermissions()->pluck('name')->toArray();
+        $userPermissions = $user->getAllPermissions()->toArray();
 
         // Nếu có ít nhất 1 permission phù hợp -> được phép
         $allowed = collect($requiredPermissions)
